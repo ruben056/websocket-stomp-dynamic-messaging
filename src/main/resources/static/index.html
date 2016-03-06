@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Listening to dynamic topics with Spring Boot WebSockets and STOMP</title>
+    <script src="sockjs-0.3.4.js"></script>
+    <script src="stomp.js"></script>
+    <script type="text/javascript">
+        var stompClient = null;
+        
+        function setConnected(connected) {
+            document.getElementById('connect').disabled = connected;
+            document.getElementById('disconnect').disabled = !connected;
+            document.getElementById('subscribeDiv').style.visibility = connected ? 'visible' : 'hidden';
+            document.getElementById('sendDiv').style.visibility = connected ? 'visible' : 'hidden';
+            document.getElementById('response').innerHTML = '';
+        }
+        
+        function connect() {
+            var socket = new SockJS('/stompws');
+            stompClient = Stomp.over(socket);            
+            stompClient.connect({}, function(frame) {
+                setConnected(true);
+                console.log('Connected: ' + frame);
+            });
+        }
+        
+        function disconnect() {
+            if (stompClient != null) {
+                stompClient.disconnect();
+            }
+            setConnected(false);
+            console.log("Disconnected");
+        }
+        
+        function showMessage(message) {
+            var response = document.getElementById('response');
+            var p = document.createElement('p');
+            p.style.wordWrap = 'break-word';
+            p.appendChild(document.createTextNode(message));
+            response.appendChild(p);
+        }
+        
+        function subscribe() {
+            var topicToSubscribeTo = document.getElementById('topicToSubscribeTo').value;
+            stompClient.subscribe(topicToSubscribeTo, function(msg){
+                    showMessage(msg.body);
+            });            
+        }
+        
+        function sendToCustomTopic() {
+            var customTopic = document.getElementById('customTopic').value;
+            var msgToSend = document.getElementById('msgToSend').value;
+            
+            stompClient.send(customTopic, {}, msgToSend);
+        }        
+        
+    </script>
+</head>
+<body onload="disconnect()">
+<noscript><h2 style="color: #ff0000">Seems your browser doesn't support Javascript! Websocket relies on Javascript being enabled. Please enable
+    Javascript and reload this page!</h2></noscript>
+<div>
+    <div>
+        <button id="connect" onclick="connect();">Connect</button>
+        <button id="disconnect" disabled="disabled" onclick="disconnect();">Disconnect</button>
+    </div>
+    <!--<div id="conversationDiv">
+        <label>What is your name?</label><input type="text" id="name" />
+        <button id="sendName" onclick="sendName();">Send</button>        
+    </div>-->
+    <div id="subscribeDiv">
+        <label>Subscribe to topic</label><input type="text" id="topicToSubscribeTo" />
+        <button id="subscribe" onclick="subscribe();">Subscribe</button>
+    </div>
+    <div id="sendDiv">
+        <label>Custom topic</label><input type="text" id="customTopic" />
+        <label>Msg to send</label><input type="text" id="msgToSend" />
+        <button id="send" onclick="sendToCustomTopic();">sendToCustomTopic</button>
+    </div>
+    
+    <p id="response"></p>
+</div>
+</body>
+</html>
