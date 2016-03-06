@@ -6,8 +6,8 @@ After the websocket session has been established, stomp takes care of the routin
 Any client can listen to any topic, and send to any topics he wants.
 
 You can also use wildcards in the topics for instance:
-listening to : `/topic/*/*`  --> will receive message send to `/topic/a/b` , `/topic/qsdfqsdf/ddd` , ... but not `/topic/a/b/c` , ...
-listening to : `/topic/**/*` --> will receive message sent to all every destination startingn with : `/topic/`
+* listening to : `/topic/*/*`  --> receives messages send to `/topic/a/b` , `/topic/qsdfqsdf/ddd` , ... but not `/topic/a/b/c` , ...
+* listening to : `/topic/**/*` --> receives message sent to all destinations starting with : `/topic/`
 
 Can by really handy for testing.
 
