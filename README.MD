@@ -16,3 +16,4 @@ Can by really handy for testing.
 `mvn spring-boot:run`
 
 Then connect to `http://localhost:8080`
+
